@@ -33,17 +33,6 @@ This is a week-one project from the Aurax Summer 2026 JavaScript series. It was 
 
 ---
 
-## Folder Structure
-
-```
-week-one-rock-paper-scissors/
-├── index.html      # HTML structure
-├── style.css       # All styles 
-├── script.js       # Game logic 
-└── README.md       # Project documentation
-```
-
----
 
 ## Installation
 
