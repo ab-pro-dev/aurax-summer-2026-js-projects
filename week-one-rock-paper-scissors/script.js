@@ -41,3 +41,22 @@ function getComputerChoice() {
   const randomIndex = Math.floor(Math.random() * choices.length);
   return choices[randomIndex];
 }
+
+
+// ── Player Choice Detection ────────────────────────────────────────────────────
+let playerChoice = '';
+
+btnRock.addEventListener('click', () => {
+  playerChoice = 'rock';
+  console.log('Player chose:', playerChoice);
+});
+
+btnPaper.addEventListener('click', () => {
+  playerChoice = 'paper';
+  console.log('Player chose:', playerChoice);
+});
+
+btnScissors.addEventListener('click', () => {
+  playerChoice = 'scissors';
+  console.log('Player chose:', playerChoice);
+});
