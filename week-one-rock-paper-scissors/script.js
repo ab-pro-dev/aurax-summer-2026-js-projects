@@ -121,3 +121,25 @@ function playRound(playerChoice, computerChoice) {
 
   return 'Computer Wins';
 }
+
+
+// ── Restart ────────────────────────────────────────────────────────────────────
+btnRestart.addEventListener('click', () => {
+  // Reset scores
+  playerScore   = 0;
+  computerScore = 0;
+
+  // Clear the scoreboard display
+  playerScoreDisplay.textContent   = 0;
+  computerScoreDisplay.textContent = 0;
+
+  // Clear choices and result back to their initial placeholders
+  playerChoiceDisplay.textContent   = '—';
+  computerChoiceDisplay.textContent = '—';
+  roundResultDisplay.textContent    = 'Make your move!';
+
+  // Re-enable the choice buttons
+  btnRock.disabled     = false;
+  btnPaper.disabled    = false;
+  btnScissors.disabled = false;
+});
