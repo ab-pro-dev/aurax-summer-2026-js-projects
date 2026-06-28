@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rock Paper Scissors</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+
+    <!-- Header -->
+    <header>
+      <h1>Rock Paper Scissors</h1>
+      <p>Choose Rock, Paper, or Scissors to play against the computer. First to win counts!</p>
+    </header>
+
+    <main>
+
+      <!-- Choice Buttons -->
+      <section id="choices">
+        <button id="btn-rock">Rock</button>
+        <button id="btn-paper">Paper</button>
+        <button id="btn-scissors">Scissors</button>
+      </section>
+
+      <!-- Round Result Display -->
+      <section id="result">
+        <div id="player-choice">
+          <h2>Your Choice</h2>
+          <p id="player-choice-display">—</p>
+        </div>
+
+        <div id="computer-choice">
+          <h2>Computer's Choice</h2>
+          <p id="computer-choice-display">—</p>
+        </div>
+
+        <div id="round-result">
+          <h2>Result</h2>
+          <p id="round-result-display">Make your move!</p>
+        </div>
+      </section>
+
+      <!-- Scoreboard -->
+      <section id="scoreboard">
+        <h2>Scoreboard</h2>
+        <div id="scores">
+          <div id="player-score">
+            <h3>Player</h3>
+            <p id="player-score-display">0</p>
+          </div>
+          <div id="computer-score">
+            <h3>Computer</h3>
+            <p id="computer-score-display">0</p>
+          </div>
+        </div>
+        <button id="btn-restart">Restart</button>
+      </section>
+
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
