@@ -34,6 +34,11 @@ const playerScoreDisplay   = document.querySelector('#player-score-display');
 const computerScoreDisplay = document.querySelector('#computer-score-display');
 
 
+// ── Score Variables ────────────────────────────────────────────────────────────
+let playerScore   = 0;
+let computerScore = 0;
+
+
 // ── Computer Choice ────────────────────────────────────────────────────────────
 // Returns one of three strings at random, simulating the computer's pick.
 function getComputerChoice() {
@@ -50,14 +55,23 @@ function capitalise(str) {
 }
 
 // Takes the player's choice, gets the computer's choice, runs the round,
-// then writes all three results to the page.
+// then writes all three results and the updated scores to the page.
 function updateDisplay(choice) {
   const computerChoice = getComputerChoice();
   const result         = playRound(choice, computerChoice);
 
+  // Update scores
+  if (result === 'Player Wins')   playerScore++;
+  if (result === 'Computer Wins') computerScore++;
+
+  // Render choices and result
   playerChoiceDisplay.textContent   = capitalise(choice);
   computerChoiceDisplay.textContent = capitalise(computerChoice);
   roundResultDisplay.textContent    = result;
+
+  // Render scores
+  playerScoreDisplay.textContent   = playerScore;
+  computerScoreDisplay.textContent = computerScore;
 }
 
 // ── Player Choice Detection ────────────────────────────────────────────────────
