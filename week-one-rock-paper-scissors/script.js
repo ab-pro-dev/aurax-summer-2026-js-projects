@@ -72,6 +72,21 @@ function updateDisplay(choice) {
   // Render scores
   playerScoreDisplay.textContent   = playerScore;
   computerScoreDisplay.textContent = computerScore;
+
+  // Check for a winner
+  if (playerScore === 5 || computerScore === 5) {
+    endGame();
+  }
+}
+
+// ── Game Over ──────────────────────────────────────────────────────────────────
+function endGame() {
+  roundResultDisplay.textContent = playerScore === 5 ? '🎉 You Win!' : '💻 Computer Wins!';
+
+  // Disable all three choice buttons so no more rounds can be played
+  btnRock.disabled     = true;
+  btnPaper.disabled    = true;
+  btnScissors.disabled = true;
 }
 
 // ── Player Choice Detection ────────────────────────────────────────────────────

@@ -93,6 +93,14 @@ main {
   filter: brightness(0.95);
 }
 
+#choices button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+  box-shadow: none;
+}
+
 #result {
   width: 100%;
   display: flex;
