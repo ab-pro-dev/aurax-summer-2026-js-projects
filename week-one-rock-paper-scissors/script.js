@@ -32,3 +32,12 @@ const playerScoreDisplay   = document.querySelector('#player-score-display');
 // This <p> holds the computer's running score.
 // We update its text content whenever the computer wins a round.
 const computerScoreDisplay = document.querySelector('#computer-score-display');
+
+
+// ── Computer Choice ────────────────────────────────────────────────────────────
+// Returns one of three strings at random, simulating the computer's pick.
+function getComputerChoice() {
+  const choices = ['rock', 'paper', 'scissors'];
+  const randomIndex = Math.floor(Math.random() * choices.length);
+  return choices[randomIndex];
+}
