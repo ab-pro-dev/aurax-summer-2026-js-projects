@@ -146,3 +146,16 @@ function getOperatorSymbol(op) {
 }
 
 btnEquals.addEventListener('click', calculate);
+
+// ── Clear ─────────────────────────────────────────────────────────────────────
+function clearCalculator() {
+  currentInput   = '0';
+  firstOperand   = null;
+  operator       = null;
+  expectNewInput = false;
+
+  expressionDisplay.textContent = '';
+  updateDisplay();
+}
+
+btnClear.addEventListener('click', clearCalculator);
