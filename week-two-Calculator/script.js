@@ -28,3 +28,32 @@ const btnDivide   = document.querySelector('#btn-divide');
 // ── Utility buttons ───────────────────────────────────────────────────────────
 const btnClear  = document.querySelector('#btn-clear');
 const btnEquals = document.querySelector('#btn-equals');
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let currentInput = '0';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function updateDisplay() {
+  resultDisplay.textContent = currentInput;
+}
+
+// ── Number & decimal input ────────────────────────────────────────────────────
+function handleNumberInput(value) {
+  // Prevent more than one decimal point
+  if (value === '.' && currentInput.includes('.')) return;
+
+  if (currentInput === '0' && value !== '.') {
+    // Replace the leading zero with the new digit
+    currentInput = value;
+  } else {
+    currentInput += value;
+  }
+
+  updateDisplay();
+}
+
+numberButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    handleNumberInput(button.textContent);
+  });
+});
