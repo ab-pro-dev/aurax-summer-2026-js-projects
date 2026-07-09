@@ -54,4 +54,14 @@ function handleCellClick(e) {
   currentPlayerDisplay.textContent = `Player ${currentPlayer}`;
 }
 
+function handleRestart() {
+  board = ['', '', '', '', '', '', '', '', ''];
+  currentPlayer = 'X';
+  gameActive = true;
+  cells.forEach(cell => cell.textContent = '');
+  currentPlayerDisplay.textContent = 'Player X';
+  gameStatusDisplay.textContent = 'Game in progress';
+}
+
 cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+restartBtn.addEventListener('click', handleRestart);
