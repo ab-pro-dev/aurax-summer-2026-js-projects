@@ -44,6 +44,12 @@ function handleCellClick(e) {
     return;
   }
 
+  if (!board.includes('')) {
+    gameStatusDisplay.textContent = "It's a draw!";
+    gameActive = false;
+    return;
+  }
+
   currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
   currentPlayerDisplay.textContent = `Player ${currentPlayer}`;
 }
