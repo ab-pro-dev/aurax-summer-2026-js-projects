@@ -57,6 +57,12 @@ h1 {
   transform: scale(1.02);
 }
 
+.cell.winning {
+  background: #a8e6cf;
+  border-color: #56c596;
+  color: #2d7a5f;
+}
+
 .status {
   margin-top: 25px;
   text-align: center;

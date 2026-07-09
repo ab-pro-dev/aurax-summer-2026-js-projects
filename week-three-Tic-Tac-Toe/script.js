@@ -22,7 +22,7 @@ function checkWinner() {
   for (const combo of winningCombinations) {
     const [a, b, c] = combo;
     if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      return board[a];
+      return combo;
     }
   }
   return null;
@@ -37,9 +37,10 @@ function handleCellClick(e) {
   board[index] = currentPlayer;
   cell.textContent = currentPlayer;
 
-  const winner = checkWinner();
-  if (winner) {
-    gameStatusDisplay.textContent = `Player ${winner} wins!`;
+  const winningCombo = checkWinner();
+  if (winningCombo) {
+    winningCombo.forEach(i => cells[i].classList.add('winning'));
+    gameStatusDisplay.textContent = `Player ${currentPlayer} wins!`;
     gameActive = false;
     return;
   }
@@ -58,7 +59,10 @@ function handleRestart() {
   board = ['', '', '', '', '', '', '', '', ''];
   currentPlayer = 'X';
   gameActive = true;
-  cells.forEach(cell => cell.textContent = '');
+  cells.forEach(cell => {
+    cell.textContent = '';
+    cell.classList.remove('winning');
+  });
   currentPlayerDisplay.textContent = 'Player X';
   gameStatusDisplay.textContent = 'Game in progress';
 }
