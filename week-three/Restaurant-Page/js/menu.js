@@ -2,34 +2,34 @@ const menuData = [
   {
     category: 'Appetizers',
     items: [
-      { name: 'Sambusa', description: 'Crispy pastry filled with spiced lentils', price: '20 Birr', image: 'Sambusa - crispy pastry with spiced lentils', tag: 'Popular' },
-      { name: 'Kitfo Tibs', description: 'Sautéed beef with rosemary and garlic', price: '1,250 Birr', image: 'Kitfo Tibs - sautéed beef with rosemary', tag: '' },
-      { name: 'Azifa', description: 'Green lentil salad with mustard dressing', price: '850 Birr', image: 'Azifa - green lentil salad', tag: 'Vegetarian' },
+      { name: 'Sambusa', description: 'Crispy pastry filled with spiced lentils', price: '20 Birr', image: 'images/sambusa.jpeg', tag: 'Popular' },
+      { name: 'Kitfo Tibs', description: 'Sautéed beef with rosemary and garlic', price: '1,250 Birr', image: 'images/Kitfo Tibs.jpg', tag: '' },
+      { name: 'Azifa', description: 'Green lentil salad with mustard dressing', price: '850 Birr', image: 'images/Azifa.jpeg', tag: 'Vegetarian' },
     ],
   },
   {
     category: 'Main Courses',
     items: [
-      { name: 'Doro Wat', description: 'Spicy chicken stew with hard-boiled eggs', price: '2,200 Birr', image: 'Doro Wat - spicy chicken stew with eggs', tag: 'Popular' },
-      { name: 'Tibs', description: 'Pan-fried beef with peppers and onions', price: '2,100 Birr', image: 'Tibs - pan-fried beef with peppers', tag: '' },
-      { name: 'Kitfo', description: 'Hand-minced beef with spiced butter', price: '2,350 Birr', image: 'Kitfo - hand-minced beef with spiced butter', tag: '' },
-      { name: 'Shiro Wat', description: 'Chickpea stew with garlic and ginger', price: '100 Birr', image: 'Shiro Wat - chickpea stew', tag: 'Vegetarian' },
+      { name: 'Doro Wat', description: 'Spicy chicken stew with hard-boiled eggs', price: '2,200 Birr', image: 'images/Doro Wat.jpg', tag: 'Popular' },
+      { name: 'Tibs', description: 'Pan-fried beef with peppers and onions', price: '2,100 Birr', image: 'images/Tibs.jpeg', tag: '' },
+      { name: 'Kitfo', description: 'Hand-minced beef with spiced butter', price: '2,350 Birr', image: 'images/Kitfo.jpeg', tag: '' },
+      { name: 'Shiro Wat', description: 'Chickpea stew with garlic and ginger', price: '100 Birr', image: 'images/Shiro Wat.jpeg', tag: 'Vegetarian' },
     ],
   },
   {
     category: 'Desserts',
     items: [
-      { name: 'Dabo Kolo', description: 'Crunchy roasted chickpea snack', price: '50 Birr', image: 'Dabo Kolo - crunchy roasted chickpeas', tag: '' },
-      { name: 'Baklava', description: 'Layered pastry with honey and nuts', price: '90 Birr', image: 'Baklava - layered pastry with honey', tag: 'Popular' },
-      { name: 'Fresh Fruit Plate', description: 'Seasonal tropical fruits', price: '250 Birr', image: 'Fresh Fruit Plate - seasonal tropical fruits', tag: 'Vegetarian' },
+      { name: 'Dabo Kolo', description: 'Crunchy roasted chickpea snack', price: '50 Birr', image: 'images/Dabo Kolo.jpeg', tag: '' },
+      { name: 'Baklava', description: 'Layered pastry with honey and nuts', price: '90 Birr', image: 'images/Baklava.jpeg', tag: 'Popular' },
+      { name: 'Fresh Fruit Plate', description: 'Seasonal tropical fruits', price: '250 Birr', image: 'images/Fresh Fruit Plate.jpeg', tag: 'Vegetarian' },
     ],
   },
   {
     category: 'Drinks',
     items: [
-      { name: 'Ethiopian Coffee', description: 'Traditional ceremonial brew', price: '30 Birr', image: 'Ethiopian Coffee - traditional ceremonial brew', tag: 'Popular' },
-      { name: 'Tej', description: 'Honey wine with a sweet finish', price: '30 Birr', image: 'Tej - honey wine with sweet finish', tag: '' },
-      { name: 'Fresh Juice', description: 'Mango, avocado, or pineapple', price: '150 Birr', image: 'Fresh Juice - mango, avocado, or pineapple', tag: 'Vegetarian' },
+      { name: 'Ethiopian Coffee', description: 'Traditional ceremonial brew', price: '30 Birr', image: 'images/Ethiopian Coffee.jpg', tag: 'Popular' },
+      { name: 'Tej', description: 'Honey wine with a sweet finish', price: '30 Birr', image: 'images/Tej.jpeg', tag: '' },
+      { name: 'Fresh Juice', description: 'Mango, avocado, or pineapple', price: '150 Birr', image: 'images/Fresh Juice.jpeg', tag: 'Vegetarian' },
     ],
   },
 ];
@@ -43,7 +43,8 @@ function createCard(item) {
     : '';
 
   card.innerHTML = `
-    <div class="card-image" role="img" aria-label="${item.image}">
+    <div class="card-image">
+      <img src="${item.image}" alt="${item.name}">
       ${tagHTML}
     </div>
     <div class="card-body">
