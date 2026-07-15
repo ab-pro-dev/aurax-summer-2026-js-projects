@@ -83,10 +83,10 @@ main {
 .home {
   position: relative;
   min-height: 85vh;
-  background-image: url('https://images.unsplash.com/photo-1606525425558-fca2f123e391?w=1920&q=80');
+  background-image: url('../images/hero.jpg');
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
+  background-attachment: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,8 +98,8 @@ main {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(62, 39, 35, 0.7) 0%,
-    rgba(183, 65, 14, 0.5) 100%
+    rgba(120, 50, 30, 0.55) 0%,
+    rgba(62, 39, 35, 0.65) 100%
   );
   z-index: 1;
 }
@@ -118,7 +118,7 @@ main {
   font-size: 3.5rem;
   font-weight: 700;
   margin-bottom: 20px;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
   line-height: 1.2;
 }
 
@@ -126,7 +126,7 @@ main {
   font-size: 1.4rem;
   font-weight: 300;
   margin-bottom: 35px;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
   color: var(--cream);
 }
 
@@ -612,6 +612,7 @@ footer {
 
   .home {
     min-height: 60vh;
+    background-attachment: scroll;
   }
 
   .hero-content h2 {
