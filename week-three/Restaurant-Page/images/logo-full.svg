@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" width="400" height="80">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;display=swap');
+      .logo-text { font-family: 'Playfair Display', serif; font-weight: 700; }
+    </style>
+  </defs>
+
+  <circle cx="40" cy="40" r="36" fill="#B7410E"/>
+  <path d="M24 34c0-9 6-16 16-16s16 7 16 16" fill="none" stroke="#D4A843" stroke-width="2.5" stroke-linecap="round"/>
+  <ellipse cx="40" cy="36" rx="14" ry="5" fill="#FFF8F0"/>
+  <ellipse cx="40" cy="36" rx="10" ry="3.5" fill="#D4A843"/>
+  <rect x="30" y="36" width="20" height="14" rx="2" fill="#FFF8F0"/>
+  <rect x="32" y="38" width="16" height="10" rx="1" fill="#5D4037"/>
+  <path d="M50 40c5 0 8 2 8 5s-3 5-8 5" fill="none" stroke="#FFF8F0" stroke-width="2" stroke-linecap="round"/>
+  <path d="M26 52c4 2 8 3 14 3s10-1 14-3" fill="none" stroke="#D4A843" stroke-width="2" stroke-linecap="round"/>
+  <path d="M22 58c5 2 10 3 18 3s13-1 18-3" fill="none" stroke="#D4A843" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+
+  <text x="90" y="38" class="logo-text" fill="#FFF8F0" font-size="28">Blue Nile</text>
+  <text x="90" y="65" class="logo-text" fill="#D4A843" font-size="22">Kitchen</text>
+</svg>

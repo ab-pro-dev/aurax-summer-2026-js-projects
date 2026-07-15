@@ -25,17 +25,17 @@ body {
 
 header {
   background: linear-gradient(135deg, var(--terracotta) 0%, var(--warm-brown) 100%);
-  color: #fff;
-  padding: 80px 20px;
+  padding: 40px 20px;
   text-align: center;
 }
 
-header h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 3rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
+.logo-link {
+  display: inline-block;
+}
+
+.logo {
+  height: 80px;
+  width: auto;
 }
 
 nav {
@@ -481,12 +481,12 @@ footer {
     height: 200px;
   }
 
-  header h1 {
-    font-size: 2rem;
+  header {
+    padding: 30px 20px;
   }
 
-  header {
-    padding: 50px 20px;
+  .logo {
+    height: 60px;
   }
 
   nav ul {
