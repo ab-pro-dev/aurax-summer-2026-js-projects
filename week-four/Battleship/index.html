@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battleship</title>
+
+  <style>
+    /* ========== BASE RESET & COLORS ========== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Color palette: 3 core colors + white/black accents
+       --navy:   #0a1628  (background)
+       --ocean:  #1b2a4a  (grid cells)
+       --accent: #3b82f6  (buttons, highlights)
+       --white:  #e2e8f0  (text, grid borders)
+    */
+
+    body {
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: #0a1628;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem;
+    }
+
+    /* ========== HEADER ========== */
+    header {
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    /* ========== STATUS BAR ========== */
+    #status {
+      margin: 1.5rem 0;
+      text-align: center;
+    }
+
+    #message {
+      font-size: 1.25rem;
+      font-weight: 700;
+      padding: 0.6rem 1.6rem;
+      background: #1b2a4a;
+      border-radius: 8px;
+      display: inline-block;
+      letter-spacing: 0.5px;
+    }
+
+    /* ========== BOARDS LAYOUT ========== */
+    #boards {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .board-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.75rem;
+      color: #94a3b8;
+    }
+
+    /* ========== GRID BOARD ========== */
+    .board {
+      display: grid;
+      grid-template-columns: repeat(10, 40px);
+      grid-template-rows: repeat(10, 40px);
+      border: 2px solid #3b82f6;
+      border-radius: 4px;
+    }
+
+    /* ========== GRID CELLS ========== */
+    .cell {
+      width: 40px;
+      height: 40px;
+      background: #1b2a4a;
+      border: 1px solid rgba(226, 232, 240, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: background 0.15s ease;
+    }
+
+    /* Hover effect: only on the enemy grid */
+    #enemy-board .cell:hover {
+      background: #253a5e;
+      cursor: crosshair;
+    }
+
+    /* ========== SHIP CELLS (player board only) ========== */
+    .cell.ship {
+      background: #64748b;
+      border-color: rgba(226, 232, 240, 0.3);
+    }
+
+    /* ========== HIT STATE ========== */
+    .cell.hit {
+      background: #dc2626;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    /* ========== MISS STATE ========== */
+    .cell.miss {
+      position: relative;
+    }
+
+    .cell.miss::after {
+      content: "";
+      width: 10px;
+      height: 10px;
+      background: #475569;
+      border-radius: 50%;
+      display: block;
+    }
+
+    /* ========== SUNK SHIP (bonus visual) ========== */
+    .cell.sunk {
+      background: #991b1b;
+      color: #ffffff;
+      font-weight: 900;
+    }
+
+    /* ========== BUTTONS ========== */
+    #controls {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.7rem 2rem;
+      border: none;
+      border-radius: 8px;
+      background: #3b82f6;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+      letter-spacing: 0.5px;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ========== MOBILE: STACK BOARDS VERTICALLY ========== */
+    @media (max-width: 960px) {
+      #boards {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Battleship</h1>
+  </header>
+
+  <main>
+    <section id="boards">
+      <div class="board-container">
+        <h2>Your Fleet</h2>
+        <div id="player-board" class="board"></div>
+      </div>
+
+      <div class="board-container">
+        <h2>Enemy Waters</h2>
+        <div id="enemy-board" class="board"></div>
+      </div>
+    </section>
+
+    <section id="status">
+      <p id="message">Place your ships</p>
+    </section>
+
+    <section id="controls">
+      <button id="start-btn">Start Game</button>
+      <button id="reset-btn" hidden>Reset</button>
+    </section>
+  </main>
+
+</body>
+</html>
