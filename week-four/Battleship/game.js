@@ -81,6 +81,29 @@ function placeAllShips(board, ships) {
   }
 }
 
+function handleEnemyClick(e) {
+  const cell = e.target;
+  const row = parseInt(cell.dataset.row);
+  const col = parseInt(cell.dataset.col);
+  const state = computerBoard[row][col];
+  if (state === HIT || state === MISS) return;
+  if (state === SHIP) {
+    computerBoard[row][col] = HIT;
+  } else {
+    computerBoard[row][col] = MISS;
+  }
+renderBoard(computerBoard, "enemy-board", false);
+addEnemyListeners();
+  addEnemyListeners();
+}
+
+function addEnemyListeners() {
+  const cells = document.querySelectorAll("#enemy-board .cell");
+  cells.forEach(function (cell) {
+    cell.addEventListener("click", handleEnemyClick);
+  });
+}
+
 const playerBoard = createBoard();
 const computerBoard = createBoard();
 placeAllShips(playerBoard, SHIPS);
