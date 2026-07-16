@@ -1,6 +1,8 @@
 const taskInput = document.getElementById('taskInput');
 const addTaskBtn = document.getElementById('addTaskBtn');
 const taskList = document.getElementById('taskList');
+const taskCounter = document.getElementById('taskCounter');
+const clearCompletedBtn = document.getElementById('clearCompletedBtn');
 
 function getTasks() {
     return JSON.parse(localStorage.getItem('tasks')) || [];
@@ -20,6 +22,13 @@ function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
+function updateCounter() {
+    const total = taskList.querySelectorAll('.task-item').length;
+    const done = taskList.querySelectorAll('.task-item.completed').length;
+    const left = total - done;
+    taskCounter.textContent = left + ' task' + (left !== 1 ? 's' : '') + ' left';
+}
+
 function createTaskElement(text, completed) {
     const li = document.createElement('li');
     li.classList.add('task-item');
@@ -36,17 +45,30 @@ function loadTasks() {
     getTasks().forEach(function (task) {
         taskList.appendChild(createTaskElement(task.text, task.completed));
     });
+    updateCounter();
 }
 
 function addTask() {
     const text = taskInput.value.trim();
     if (!text) return;
 
-    taskList.appendChild(createTaskElement(text, false));
+    const li = createTaskElement(text, false);
+    li.classList.add('fade-in');
+    taskList.appendChild(li);
     saveTasks();
+    updateCounter();
 
     taskInput.value = '';
     taskInput.focus();
+}
+
+function removeTask(li) {
+    li.classList.add('fade-out');
+    li.addEventListener('animationend', function () {
+        li.remove();
+        saveTasks();
+        updateCounter();
+    });
 }
 
 function saveEdit(li, input) {
@@ -57,13 +79,18 @@ function saveEdit(li, input) {
     saveTasks();
 }
 
+clearCompletedBtn.addEventListener('click', function () {
+    taskList.querySelectorAll('.task-item.completed').forEach(function (li) {
+        removeTask(li);
+    });
+});
+
 taskList.addEventListener('click', function (e) {
     const li = e.target.closest('.task-item');
     if (!li) return;
 
     if (e.target.classList.contains('delete-btn')) {
-        li.remove();
-        saveTasks();
+        removeTask(li);
         return;
     }
 
@@ -83,6 +110,7 @@ taskList.addEventListener('click', function (e) {
     if (e.target.tagName === 'SPAN') {
         li.classList.toggle('completed');
         saveTasks();
+        updateCounter();
     }
 });
 
