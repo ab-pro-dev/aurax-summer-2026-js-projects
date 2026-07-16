@@ -81,7 +81,34 @@ function placeAllShips(board, ships) {
   }
 }
 
+let playerTurn = true;
+
+function computerTurn() {
+  playerTurn = false;
+  setTimeout(function () {
+    const available = [];
+    for (let r = 0; r < BOARD_SIZE; r++) {
+      for (let c = 0; c < BOARD_SIZE; c++) {
+        const s = playerBoard[r][c];
+        if (s !== HIT && s !== MISS) {
+          available.push({ row: r, col: c });
+        }
+      }
+    }
+    if (available.length === 0) return;
+    const pick = available[Math.floor(Math.random() * available.length)];
+    if (playerBoard[pick.row][pick.col] === SHIP) {
+      playerBoard[pick.row][pick.col] = HIT;
+    } else {
+      playerBoard[pick.row][pick.col] = MISS;
+    }
+    renderBoard(playerBoard, "player-board", true);
+    playerTurn = true;
+  }, 500);
+}
+
 function handleEnemyClick(e) {
+  if (!playerTurn) return;
   const cell = e.target;
   const row = parseInt(cell.dataset.row);
   const col = parseInt(cell.dataset.col);
@@ -92,9 +119,9 @@ function handleEnemyClick(e) {
   } else {
     computerBoard[row][col] = MISS;
   }
-renderBoard(computerBoard, "enemy-board", false);
-addEnemyListeners();
+  renderBoard(computerBoard, "enemy-board", false);
   addEnemyListeners();
+  computerTurn();
 }
 
 function addEnemyListeners() {
