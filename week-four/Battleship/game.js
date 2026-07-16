@@ -8,6 +8,8 @@ const SHIPS = [5, 4, 3, 3, 2];
 
 let playerBoard = createBoard();
 let computerBoard = createBoard();
+let playerShips = [];
+let computerShips = [];
 let playerTurn = true;
 let gameOver = false;
 let gameStarted = false;
@@ -69,22 +71,27 @@ function placeShip(board, length) {
     const row = Math.floor(Math.random() * BOARD_SIZE);
     const col = Math.floor(Math.random() * BOARD_SIZE);
     if (canPlace(board, row, col, length, horizontal)) {
+      const cells = [];
       for (let i = 0; i < length; i++) {
         if (horizontal) {
           board[row][col + i] = SHIP;
+          cells.push({ row: row, col: col + i });
         } else {
           board[row + i][col] = SHIP;
+          cells.push({ row: row + i, col: col });
         }
       }
-      return;
+      return cells;
     }
   }
 }
 
 function placeAllShips(board, ships) {
+  const placed = [];
   for (let i = 0; i < ships.length; i++) {
-    placeShip(board, ships[i]);
+    placed.push(placeShip(board, ships[i]));
   }
+  return placed;
 }
 
 function updateStatus(text) {
@@ -98,6 +105,24 @@ function allShipsSunk(board) {
     }
   }
   return true;
+}
+
+function isShipSunk(board, shipCells) {
+  for (let i = 0; i < shipCells.length; i++) {
+    if (board[shipCells[i].row][shipCells[i].col] !== HIT) return false;
+  }
+  return true;
+}
+
+function findSunkShip(board, ships) {
+  for (let i = 0; i < ships.length; i++) {
+    if (ships[i].length > 0 && isShipSunk(board, ships[i])) {
+      const sunk = ships[i];
+      ships[i] = [];
+      return sunk;
+    }
+  }
+  return null;
 }
 
 function loadScore() {
@@ -158,6 +183,15 @@ function computerTurn() {
       updateStatus("You Lose!");
       return;
     }
+    const sunk = findSunkShip(playerBoard, playerShips);
+    if (sunk) {
+      updateStatus("Computer sank your ship!");
+      setTimeout(function () {
+        if (!gameOver) updateStatus("Your turn — attack the enemy waters!");
+      }, 1500);
+      playerTurn = true;
+      return;
+    }
     playerTurn = true;
     updateStatus("Your turn — attack the enemy waters!");
   }, 500);
@@ -184,6 +218,14 @@ function handleEnemyClick(e) {
     updateStatus("You Win!");
     return;
   }
+  const sunk = findSunkShip(computerBoard, computerShips);
+  if (sunk) {
+    updateStatus("You sank a ship!");
+    setTimeout(function () {
+      if (!gameOver) updateStatus("Your turn — attack the enemy waters!");
+    }, 1500);
+    return;
+  }
   computerTurn();
 }
 
@@ -203,8 +245,8 @@ function startGame() {
 function resetGame() {
   playerBoard = createBoard();
   computerBoard = createBoard();
-  placeAllShips(playerBoard, SHIPS);
-  placeAllShips(computerBoard, SHIPS);
+  playerShips = placeAllShips(playerBoard, SHIPS);
+  computerShips = placeAllShips(computerBoard, SHIPS);
   playerTurn = true;
   gameOver = false;
   gameStarted = false;
@@ -221,8 +263,8 @@ document.getElementById("start-btn").addEventListener("click", startGame);
 document.getElementById("reset-btn").addEventListener("click", resetGame);
 
 loadScore();
-placeAllShips(playerBoard, SHIPS);
-placeAllShips(computerBoard, SHIPS);
+playerShips = placeAllShips(playerBoard, SHIPS);
+computerShips = placeAllShips(computerBoard, SHIPS);
 renderBoard(playerBoard, "player-board", true);
 renderBoard(computerBoard, "enemy-board", false);
 addEnemyListeners();
