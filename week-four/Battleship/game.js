@@ -83,6 +83,7 @@ function placeAllShips(board, ships) {
 
 const playerBoard = createBoard();
 const computerBoard = createBoard();
+placeAllShips(playerBoard, SHIPS);
 placeAllShips(computerBoard, SHIPS);
 
 renderBoard(playerBoard, "player-board", true);
