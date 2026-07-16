@@ -239,6 +239,24 @@ body {
 }
 
 /* ----------------------------------------
+   Auto-Correct Note
+   ---------------------------------------- */
+.correction-note {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--accent-blue);
+    background: rgba(96, 165, 250, 0.1);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: var(--radius-sm);
+    padding: 10px 16px;
+    margin-bottom: 16px;
+}
+
+.correction-note strong {
+    color: var(--text-white);
+}
+
+/* ----------------------------------------
    Main Weather Card
    ---------------------------------------- */
 .main-card {
