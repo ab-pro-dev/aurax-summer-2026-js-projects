@@ -26,6 +26,10 @@ form.addEventListener('submit', async (e) => {
     try {
         // Fetch weather data from API
         const weatherData = await fetchWeather(city);
+
+        // Log the data to console for debugging
+        console.log('Weather data:', weatherData);
+
         // Display the results
         displayWeather(weatherData);
     } catch (error) {
