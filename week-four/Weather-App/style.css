@@ -1,0 +1,201 @@
+/* ========================================
+   Weather App Styles
+   Clean, modern CSS - no frameworks
+   ======================================== */
+
+/* Google Font Import - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* ----------------------------------------
+   CSS Variables (Easy to customize colors)
+   ---------------------------------------- */
+:root {
+    --primary-color: #4a90d9;        /* Sky blue accent */
+    --primary-hover: #357abd;        /* Darker blue for hover */
+    --bg-gradient-start: #e0f2fe;    /* Light sky blue */
+    --bg-gradient-end: #bae6fd;      /* Slightly darker sky blue */
+    --card-bg: #ffffff;              /* White card */
+    --text-dark: #1e293b;            /* Dark text */
+    --text-muted: #64748b;           /* Gray text */
+    --error-color: #ef4444;          /* Red for errors */
+    --shadow: 0 10px 40px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    --radius: 16px;                  /* Rounded corners */
+}
+
+/* ----------------------------------------
+   Reset & Base Styles
+   ---------------------------------------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ----------------------------------------
+   Main Container / Card
+   ---------------------------------------- */
+main {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+}
+
+/* ----------------------------------------
+   Header
+   ---------------------------------------- */
+header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+/* ----------------------------------------
+   Search Form
+   ---------------------------------------- */
+#search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+#city-input {
+    flex: 1;
+    padding: 14px 18px;
+    font-family: inherit;
+    font-size: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 50px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#city-input:focus {
+    border-color: var(--primary-color);
+}
+
+#city-input::placeholder {
+    color: var(--text-muted);
+}
+
+button[type="submit"] {
+    padding: 14px 28px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background: var(--primary-color);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background: var(--primary-hover);
+    transform: scale(1.03);
+}
+
+button[type="submit"]:active {
+    transform: scale(0.98);
+}
+
+/* ----------------------------------------
+   Weather Results Display
+   ---------------------------------------- */
+#weather-results {
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* City name */
+.city-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+/* Weather icon */
+.weather-icon {
+    width: 100px;
+    height: 100px;
+    margin: 16px auto;
+    display: block;
+}
+
+/* Temperature - large and bold */
+.temperature {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+/* Weather condition text (e.g., "Sunny", "Cloudy") */
+.condition {
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+/* ----------------------------------------
+   Loading State
+   ---------------------------------------- */
+.loading {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    padding: 40px 0;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* ----------------------------------------
+   Error State
+   ---------------------------------------- */
+.error {
+    font-size: 1.1rem;
+    color: var(--error-color);
+    padding: 40px 0;
+    font-weight: 500;
+}
+
+/* ----------------------------------------
+   Responsive Adjustments
+   ---------------------------------------- */
+@media (max-width: 480px) {
+    main {
+        padding: 30px 24px;
+    }
+
+    #search-form {
+        flex-direction: column;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+    }
+
+    .temperature {
+        font-size: 2.8rem;
+    }
+}
