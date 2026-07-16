@@ -20,6 +20,35 @@ const suggestionsList = document.getElementById('suggestions-list');
 let debounceTimer = null;
 
 // ----------------------------------------
+// Autocomplete — Country code → full name map
+// Common codes only; unknown codes fall back to the code itself.
+// ----------------------------------------
+const COUNTRY_NAMES = {
+    AF:'Afghanistan',AL:'Albania',DZ:'Algeria',AR:'Argentina',AU:'Australia',
+    AT:'Austria',BD:'Bangladesh',BE:'Belgium',BO:'Bolivia',BR:'Brazil',
+    BG:'Bulgaria',KH:'Cambodia',CM:'Cameroon',CA:'Canada',CL:'Chile',
+    CN:'China',CO:'Colombia',CR:'Costa Rica',HR:'Croatia',CU:'Cuba',
+    CZ:'Czech Republic',DK:'Denmark',EC:'Ecuador',EG:'Egypt',SV:'El Salvador',
+    ET:'Ethiopia',FI:'Finland',FR:'France',DE:'Germany',GH:'Ghana',
+    GR:'Greece',GT:'Guatemala',HN:'Honduras',HK:'Hong Kong',HU:'Hungary',
+    IS:'Iceland',IN:'India',ID:'Indonesia',IR:'Iran',IQ:'Iraq',
+    IE:'Ireland',IL:'Israel',IT:'Italy',JM:'Jamaica',JP:'Japan',
+    JO:'Jordan',KZ:'Kazakhstan',KE:'Kenya',KR:'South Korea',KW:'Kuwait',
+    LA:'Laos',LB:'Lebanon',LY:'Libya',MY:'Malaysia',MX:'Mexico',
+    MA:'Morocco',MZ:'Mozambique',MM:'Myanmar',NP:'Nepal',NL:'Netherlands',
+    NZ:'New Zealand',NI:'Nicaragua',NG:'Nigeria',NO:'Norway',OM:'Oman',
+    PK:'Pakistan',PA:'Panama',PY:'Paraguay',PE:'Peru',PH:'Philippines',
+    PL:'Poland',PT:'Portugal',QA:'Qatar',RO:'Romania',RU:'Russia',
+    SA:'Saudi Arabia',SN:'Senegal',RS:'Serbia',SG:'Singapore',SK:'Slovakia',
+    SI:'Slovenia',ZA:'South Africa',ES:'Spain',LK:'Sri Lanka',SD:'Sudan',
+   SE:'Sweden',CH:'Switzerland',SY:'Syria',TW:'Taiwan',TZ:'Tanzania',
+    TH:'Thailand',TN:'Tunisia',TR:'Turkey',UG:'Uganda',UA:'Ukraine',
+    AE:'United Arab Emirates',GB:'United Kingdom',US:'United States',
+    UY:'Uruguay',UZ:'Uzbekistan',VE:'Venezuela',VN:'Vietnam',YE:'Yemen',
+    ZW:'Zimbabwe'
+};
+
+// ----------------------------------------
 // Autocomplete — Listen to input changes
 // Debounce: wait 350ms after user stops typing
 // Only fetch after 2+ characters
@@ -82,7 +111,7 @@ cityInput.addEventListener('keydown', (e) => {
 // Autocomplete — Fetch city suggestions from Geocoding API
 // ----------------------------------------
 async function fetchSuggestions(query) {
-    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${API_KEY}`;
+    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&lang=en&appid=${API_KEY}`;
 
     try {
         const response = await fetch(url);
@@ -100,14 +129,28 @@ async function fetchSuggestions(query) {
 
 // ----------------------------------------
 // Autocomplete — Render the dropdown items
+// Shows full country name, state when available,
+// and sorts exact-prefix matches to the top.
 // ----------------------------------------
 function showSuggestions(cities) {
-    suggestionsList.innerHTML = cities.map(city => {
-        const country = city.country || '';
+    const query = cityInput.value.trim().toLowerCase();
+
+    // Sort: cities whose name starts with the query come first
+    const sorted = [...cities].sort((a, b) => {
+        const aStarts = a.name.toLowerCase().startsWith(query);
+        const bStarts = b.name.toLowerCase().startsWith(query);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+        return 0;
+    });
+
+    suggestionsList.innerHTML = sorted.map(city => {
+        const code = city.country || '';
+        const fullName = COUNTRY_NAMES[code] || code; // fallback to code if unknown
         const state = city.state ? `, ${city.state}` : '';
         const label = `${city.name}${state}`;
 
-        return `<li data-city="${city.name}">${label}<span class="suggestion-country">${country}</span></li>`;
+        return `<li data-city="${city.name}">${label}<span class="suggestion-country">${fullName}</span></li>`;
     }).join('');
 
     suggestionsList.classList.add('active');
