@@ -82,6 +82,20 @@ function placeAllShips(board, ships) {
 }
 
 let playerTurn = true;
+let gameOver = false;
+
+function showMessage(msg) {
+  document.getElementById("message").textContent = msg;
+}
+
+function allShipsSunk(board) {
+  for (let r = 0; r < BOARD_SIZE; r++) {
+    for (let c = 0; c < BOARD_SIZE; c++) {
+      if (board[r][c] === SHIP) return false;
+    }
+  }
+  return true;
+}
 
 function computerTurn() {
   playerTurn = false;
@@ -103,12 +117,17 @@ function computerTurn() {
       playerBoard[pick.row][pick.col] = MISS;
     }
     renderBoard(playerBoard, "player-board", true);
+    if (allShipsSunk(playerBoard)) {
+      gameOver = true;
+      showMessage("You Lose!");
+      return;
+    }
     playerTurn = true;
   }, 500);
 }
 
 function handleEnemyClick(e) {
-  if (!playerTurn) return;
+  if (!playerTurn || gameOver) return;
   const cell = e.target;
   const row = parseInt(cell.dataset.row);
   const col = parseInt(cell.dataset.col);
@@ -120,7 +139,11 @@ function handleEnemyClick(e) {
     computerBoard[row][col] = MISS;
   }
   renderBoard(computerBoard, "enemy-board", false);
-  addEnemyListeners();
+  if (allShipsSunk(computerBoard)) {
+    gameOver = true;
+    showMessage("You Win!");
+    return;
+  }
   computerTurn();
 }
 
@@ -138,3 +161,4 @@ placeAllShips(computerBoard, SHIPS);
 
 renderBoard(playerBoard, "player-board", true);
 renderBoard(computerBoard, "enemy-board", false);
+addEnemyListeners();
