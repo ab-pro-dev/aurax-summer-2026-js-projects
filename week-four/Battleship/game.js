@@ -4,6 +4,13 @@ const HIT = "hit";
 const MISS = "miss";
 
 const BOARD_SIZE = 10;
+const SHIPS = [5, 4, 3, 3, 2];
+
+let playerBoard = createBoard();
+let computerBoard = createBoard();
+let playerTurn = true;
+let gameOver = false;
+let moveCount = 0;
 
 function createBoard() {
   const board = [];
@@ -39,8 +46,6 @@ function renderBoard(board, containerId, showShips) {
     }
   }
 }
-
-const SHIPS = [5, 4, 3, 3, 2];
 
 function canPlace(board, row, col, length, horizontal) {
   if (horizontal) {
@@ -81,9 +86,6 @@ function placeAllShips(board, ships) {
   }
 }
 
-let playerTurn = true;
-let gameOver = false;
-
 function showMessage(msg) {
   document.getElementById("message").textContent = msg;
 }
@@ -95,6 +97,37 @@ function allShipsSunk(board) {
     }
   }
   return true;
+}
+
+function loadScore() {
+  const data = JSON.parse(localStorage.getItem("battleship-score"));
+  if (data) {
+    document.getElementById("wins").textContent = data.wins;
+    document.getElementById("losses").textContent = data.losses;
+  }
+}
+
+function saveScore() {
+  const wins = parseInt(document.getElementById("wins").textContent);
+  const losses = parseInt(document.getElementById("losses").textContent);
+  localStorage.setItem("battleship-score", JSON.stringify({ wins: wins, losses: losses }));
+}
+
+function addWin() {
+  const el = document.getElementById("wins");
+  el.textContent = parseInt(el.textContent) + 1;
+  saveScore();
+}
+
+function addLoss() {
+  const el = document.getElementById("losses");
+  el.textContent = parseInt(el.textContent) + 1;
+  saveScore();
+}
+
+function updateMoves() {
+  moveCount++;
+  document.getElementById("moves").textContent = moveCount;
 }
 
 function computerTurn() {
@@ -119,6 +152,7 @@ function computerTurn() {
     renderBoard(playerBoard, "player-board", true);
     if (allShipsSunk(playerBoard)) {
       gameOver = true;
+      addLoss();
       showMessage("You Lose!");
       return;
     }
@@ -138,9 +172,12 @@ function handleEnemyClick(e) {
   } else {
     computerBoard[row][col] = MISS;
   }
+  updateMoves();
   renderBoard(computerBoard, "enemy-board", false);
+  addEnemyListeners();
   if (allShipsSunk(computerBoard)) {
     gameOver = true;
+    addWin();
     showMessage("You Win!");
     return;
   }
@@ -154,11 +191,26 @@ function addEnemyListeners() {
   });
 }
 
-const playerBoard = createBoard();
-const computerBoard = createBoard();
+function resetGame() {
+  playerBoard = createBoard();
+  computerBoard = createBoard();
+  placeAllShips(playerBoard, SHIPS);
+  placeAllShips(computerBoard, SHIPS);
+  playerTurn = true;
+  gameOver = false;
+  moveCount = 0;
+  document.getElementById("moves").textContent = "0";
+  showMessage("Place your ships");
+  renderBoard(playerBoard, "player-board", true);
+  renderBoard(computerBoard, "enemy-board", false);
+  addEnemyListeners();
+}
+
+document.getElementById("reset-btn").addEventListener("click", resetGame);
+
+loadScore();
 placeAllShips(playerBoard, SHIPS);
 placeAllShips(computerBoard, SHIPS);
-
 renderBoard(playerBoard, "player-board", true);
 renderBoard(computerBoard, "enemy-board", false);
 addEnemyListeners();

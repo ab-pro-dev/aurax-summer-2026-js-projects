@@ -43,6 +43,19 @@ h1 {
   letter-spacing: 0.5px;
 }
 
+#scoreboard {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  font-size: 0.95rem;
+  color: #94a3b8;
+}
+
+#scoreboard strong {
+  color: #e2e8f0;
+}
+
 #boards {
   display: flex;
   gap: 3rem;
@@ -101,10 +114,18 @@ h2 {
   color: #ffffff;
   font-weight: 900;
   font-size: 1.2rem;
+  animation: hitPop 0.3s ease;
+}
+
+@keyframes hitPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 .cell.miss {
   position: relative;
+  animation: missFade 0.4s ease;
 }
 
 .cell.miss::after {
@@ -114,6 +135,18 @@ h2 {
   background: #475569;
   border-radius: 50%;
   display: block;
+  animation: missDot 0.3s ease;
+}
+
+@keyframes missFade {
+  0% { background: #1b2a4a; }
+  50% { background: #334155; }
+  100% { background: #1b2a4a; }
+}
+
+@keyframes missDot {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
 }
 
 .cell.sunk {
