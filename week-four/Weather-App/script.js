@@ -5,12 +5,161 @@
 // API Key from OpenWeatherMap
 const API_KEY = '2f02facba7e322bc3a4d3a53d06765ce';
 const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
+const FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
 
 // DOM Elements
 const form = document.getElementById('search-form');
 const cityInput = document.getElementById('city-input');
 const resultsDiv = document.getElementById('weather-results');
 const locationBtn = document.getElementById('location-btn');
+const suggestionsList = document.getElementById('suggestions-list');
+
+// ----------------------------------------
+// Autocomplete — Debounce timer
+// ----------------------------------------
+let debounceTimer = null;
+
+// ----------------------------------------
+// Autocomplete — Listen to input changes
+// Debounce: wait 350ms after user stops typing
+// Only fetch after 2+ characters
+// ----------------------------------------
+cityInput.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    const query = cityInput.value.trim();
+
+    if (query.length < 2) {
+        hideSuggestions();
+        return;
+    }
+
+    debounceTimer = setTimeout(() => {
+        fetchSuggestions(query);
+    }, 350);
+});
+
+// ----------------------------------------
+// Autocomplete — Close dropdown on outside click
+// ----------------------------------------
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper')) {
+        hideSuggestions();
+    }
+});
+
+// ----------------------------------------
+// Autocomplete — Keyboard navigation
+// Arrow keys to move, Enter to select, Escape to close
+// ----------------------------------------
+cityInput.addEventListener('keydown', (e) => {
+    const items = suggestionsList.querySelectorAll('li');
+    if (!items.length) return;
+
+    const activeItem = suggestionsList.querySelector('.active-item');
+    let index = Array.from(items).indexOf(activeItem);
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (activeItem) activeItem.classList.remove('active-item');
+        index = (index + 1) % items.length;
+        items[index].classList.add('active-item');
+        items[index].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (activeItem) activeItem.classList.remove('active-item');
+        index = (index - 1 + items.length) % items.length;
+        items[index].classList.add('active-item');
+        items[index].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter' && activeItem) {
+        e.preventDefault();
+        selectSuggestion(activeItem.dataset.city);
+    } else if (e.key === 'Escape') {
+        hideSuggestions();
+    }
+});
+
+// ----------------------------------------
+// Autocomplete — Fetch city suggestions from Geocoding API
+// ----------------------------------------
+async function fetchSuggestions(query) {
+    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${API_KEY}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.length > 0) {
+            showSuggestions(data);
+        } else {
+            hideSuggestions();
+        }
+    } catch (error) {
+        hideSuggestions();
+    }
+}
+
+// ----------------------------------------
+// Autocomplete — Render the dropdown items
+// ----------------------------------------
+function showSuggestions(cities) {
+    suggestionsList.innerHTML = cities.map(city => {
+        const country = city.country || '';
+        const state = city.state ? `, ${city.state}` : '';
+        const label = `${city.name}${state}`;
+
+        return `<li data-city="${city.name}">${label}<span class="suggestion-country">${country}</span></li>`;
+    }).join('');
+
+    suggestionsList.classList.add('active');
+
+    suggestionsList.querySelectorAll('li').forEach(li => {
+        li.addEventListener('click', () => {
+            selectSuggestion(li.dataset.city);
+        });
+    });
+}
+
+// ----------------------------------------
+// Autocomplete — Hide dropdown
+// ----------------------------------------
+function hideSuggestions() {
+    suggestionsList.classList.remove('active');
+    suggestionsList.innerHTML = '';
+}
+
+// ----------------------------------------
+// Autocomplete — User selected a suggestion
+// ----------------------------------------
+function selectSuggestion(city) {
+    cityInput.value = city;
+    hideSuggestions();
+    loadWeatherByCity(city);
+}
+
+// ----------------------------------------
+// Helper: safely set text on an element by ID.
+// Logs a warning instead of crashing if missing.
+// ----------------------------------------
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.textContent = value;
+    } else {
+        console.warn(`Element #${id} not found — cannot set textContent.`);
+    }
+}
+
+// ----------------------------------------
+// Helper: safely set src on an image by ID.
+// ----------------------------------------
+function setImageSrc(id, src) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.src = src;
+    } else {
+        console.warn(`Element #${id} not found — cannot set src.`);
+    }
+}
 
 // ----------------------------------------
 // Event Listener - Form Submit
@@ -56,8 +205,21 @@ async function loadWeatherByCity(city) {
     showLoading();
     try {
         const data = await fetchWeatherByCity(city);
+
+        // Forecast is optional — don't let it break the whole app
+        let forecastData = null;
+        try {
+            forecastData = await fetchForecastByCity(city);
+        } catch (e) {
+            console.warn('Forecast unavailable:', e.message);
+        }
+
         console.log('Weather data:', data);
         displayWeather(data);
+
+        if (forecastData) {
+            displayForecast(forecastData);
+        }
         saveLastCity(city);
     } catch (error) {
         showError(error.message);
@@ -70,12 +232,21 @@ async function loadWeatherByCity(city) {
 async function loadWeatherByCoords(lat, lon) {
     try {
         const data = await fetchWeatherByCoords(lat, lon);
-        console.log('Weather data:', data);
 
-        // Reverse geocode to get actual city name
+        let forecastData = null;
+        try {
+            forecastData = await fetchForecastByCoords(lat, lon);
+        } catch (e) {
+            console.warn('Forecast unavailable:', e.message);
+        }
+
         const locationName = await reverseGeocode(lat, lon);
 
         displayWeather(data, locationName);
+
+        if (forecastData) {
+            displayForecast(forecastData);
+        }
         saveLastCity(data.name);
     } catch (error) {
         showError(error.message);
@@ -98,9 +269,10 @@ async function reverseGeocode(lat, lon) {
 
 // ----------------------------------------
 // Fetch Weather by City Name
+// FIX: encode city name so spaces/special chars don't break the URL
 // ----------------------------------------
 async function fetchWeatherByCity(city) {
-    const url = `${BASE_URL}?q=${city}&appid=${API_KEY}&units=metric`;
+    const url = `${BASE_URL}?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`;
     return await fetchWeatherData(url);
 }
 
@@ -110,6 +282,27 @@ async function fetchWeatherByCity(city) {
 async function fetchWeatherByCoords(lat, lon) {
     const url = `${BASE_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
     return await fetchWeatherData(url);
+}
+
+// ----------------------------------------
+// Fetch Forecast by City Name
+// FIX: encode city name for same reason as above
+// ----------------------------------------
+async function fetchForecastByCity(city) {
+    const url = `${FORECAST_URL}?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Forecast unavailable');
+    return await response.json();
+}
+
+// ----------------------------------------
+// Fetch Forecast by Coordinates
+// ----------------------------------------
+async function fetchForecastByCoords(lat, lon) {
+    const url = `${FORECAST_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Forecast unavailable');
+    return await response.json();
 }
 
 // ----------------------------------------
@@ -129,23 +322,115 @@ async function fetchWeatherData(url) {
 }
 
 // ----------------------------------------
+// Get Weather Icon URL (large size)
+// ----------------------------------------
+function getWeatherEmoji(iconCode) {
+    return `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
+}
+
+// ----------------------------------------
 // Display Weather Data in the UI
+// FIX: Rebuilds the full HTML structure first, THEN sets values.
+// This avoids the NULL crash caused by showLoading() destroying
+// the DOM elements that displayWeather() later tries to update.
 // ----------------------------------------
 function displayWeather(data, locationName = null) {
     const cityName = locationName || data.name;
     const temp = Math.round(data.main.temp);
     const condition = data.weather[0].description;
     const iconCode = data.weather[0].icon;
-    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-    const coord = data.coord;
+    const humidity = data.main.humidity;
+    const windSpeed = Math.round(data.wind.speed * 3.6); // m/s → km/h
+    const precipitation = Math.min(data.clouds.all, 100);
 
+    // Step 1: Rebuild the full card structure so all elements exist
     resultsDiv.innerHTML = `
-        <h2 class="city-name">${cityName}</h2>
-        <p class="coordinates">${coord.lat.toFixed(2)}°N, ${coord.lon.toFixed(2)}°E</p>
-        <img class="weather-icon" src="${iconUrl}" alt="${condition}">
-        <p class="temperature">${temp}°C</p>
-        <p class="condition">${condition}</p>
+        <!-- Main Weather Card -->
+        <div class="glass-card main-card">
+            <p class="city-name" id="city-name"></p>
+            <p class="weather-condition" id="weather-condition"></p>
+            <div class="weather-icon-container">
+                <img class="weather-icon" id="weather-icon" src="" alt="weather icon">
+            </div>
+            <p class="temperature" id="temperature"></p>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="glass-card stat-card">
+                <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                </svg>
+                <p class="stat-value" id="humidity"></p>
+                <p class="stat-label">Humidity</p>
+            </div>
+            <div class="glass-card stat-card">
+                <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path>
+                </svg>
+                <p class="stat-value" id="wind"></p>
+                <p class="stat-label">Wind</p>
+            </div>
+            <div class="glass-card stat-card">
+                <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"></path>
+                    <polyline points="13 11 9 17 15 17 11 23"></polyline>
+                </svg>
+                <p class="stat-value" id="precipitation"></p>
+                <p class="stat-label">Precipitation</p>
+            </div>
+        </div>
+
+        <!-- Hourly Forecast -->
+        <div class="glass-card forecast-card">
+            <h3 class="forecast-title">Hourly Forecast</h3>
+            <div class="forecast-scroll" id="forecast-scroll"></div>
+        </div>
     `;
+
+    // Step 2: Now safely set values — elements are guaranteed to exist
+    setText('city-name', cityName);
+    setText('weather-condition', condition);
+    setImageSrc('weather-icon', getWeatherEmoji(iconCode));
+    setText('temperature', `${temp}°`);
+    setText('humidity', `${humidity}%`);
+    setText('wind', `${windSpeed} km/h`);
+    setText('precipitation', `${precipitation}%`);
+}
+
+// ----------------------------------------
+// Display Hourly Forecast
+// ----------------------------------------
+function displayForecast(data) {
+    const forecastScroll = document.getElementById('forecast-scroll');
+    if (!forecastScroll) {
+        console.warn('Element #forecast-scroll not found — cannot display forecast.');
+        return;
+    }
+
+    forecastScroll.innerHTML = '';
+
+    // Get next 8 items (each 3 hours apart = 24 hours total)
+    const forecastItems = data.list.slice(0, 8);
+
+    forecastItems.forEach(item => {
+        const time = new Date(item.dt * 1000);
+        const hours = time.getHours();
+        const timeStr = hours === 0 ? '12 AM' :
+                        hours === 12 ? '12 PM' :
+                        hours > 12 ? `${hours - 12} PM` : `${hours} AM`;
+        const temp = Math.round(item.main.temp);
+        const iconCode = item.weather[0].icon;
+
+        const forecastItem = document.createElement('div');
+        forecastItem.className = 'forecast-item';
+        forecastItem.innerHTML = `
+            <p class="forecast-time">${timeStr}</p>
+            <img class="forecast-icon" src="https://openweathermap.org/img/wn/${iconCode}@2x.png" alt="weather">
+            <p class="forecast-temp">${temp}°</p>
+        `;
+        forecastScroll.appendChild(forecastItem);
+    });
 }
 
 // ----------------------------------------
@@ -153,9 +438,11 @@ function displayWeather(data, locationName = null) {
 // ----------------------------------------
 function showLoading() {
     resultsDiv.innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Loading...</p>
+        <div class="glass-card main-card">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading weather data...</p>
+            </div>
         </div>
     `;
 }
@@ -164,7 +451,18 @@ function showLoading() {
 // Show Error State
 // ----------------------------------------
 function showError(message) {
-    resultsDiv.innerHTML = `<p class="error">${message}</p>`;
+    resultsDiv.innerHTML = `
+        <div class="glass-card main-card">
+            <div class="error">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 16px; opacity: 0.5;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <p>${message}</p>
+            </div>
+        </div>
+    `;
 }
 
 // ----------------------------------------

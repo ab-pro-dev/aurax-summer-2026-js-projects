@@ -1,29 +1,28 @@
 /* ========================================
-   Weather App Styles
-   Clean, modern CSS - no frameworks
+   Weather App - Dark Glassmorphism Theme
    ======================================== */
 
-/* Google Font Import - Poppins */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 /* ----------------------------------------
-   CSS Variables (Easy to customize colors)
+   CSS Variables
    ---------------------------------------- */
 :root {
-    --primary-color: #4a90d9;        /* Sky blue accent */
-    --primary-hover: #357abd;        /* Darker blue for hover */
-    --bg-gradient-start: #e0f2fe;    /* Light sky blue */
-    --bg-gradient-end: #bae6fd;      /* Slightly darker sky blue */
-    --card-bg: #ffffff;              /* White card */
-    --text-dark: #1e293b;            /* Dark text */
-    --text-muted: #64748b;           /* Gray text */
-    --error-color: #ef4444;          /* Red for errors */
-    --shadow: 0 10px 40px rgba(0, 0, 0, 0.1); /* Soft shadow */
-    --radius: 16px;                  /* Rounded corners */
+    --bg-dark: #1a1b26;
+    --bg-darker: #13141c;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: rgba(0, 0, 0, 0.3);
+    --text-white: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --accent-blue: #60a5fa;
+    --radius: 20px;
+    --radius-sm: 12px;
 }
 
 /* ----------------------------------------
-   Reset & Base Styles
+   Reset
    ---------------------------------------- */
 * {
     margin: 0;
@@ -34,174 +33,369 @@
 body {
     font-family: 'Poppins', sans-serif;
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    background: var(--bg-darker);
+    color: var(--text-white);
+    overflow-x: hidden;
+}
+
+/* Screen reader only - hides button visually */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
 }
 
 /* ----------------------------------------
-   Main Container / Card
+   Background - Dark Sky Gradient
    ---------------------------------------- */
-main {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 40px;
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #1e2a4a 0%, #1a1b26 50%, #0f1019 100%);
+    z-index: -1;
+}
+
+/* Optional: Add subtle stars/noise effect */
+.background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.2), transparent),
+        radial-gradient(1px 1px at 50px 160px, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.2), transparent),
+        radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.4), transparent);
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    opacity: 0.5;
+}
+
+/* ----------------------------------------
+   App Container
+   ---------------------------------------- */
+.app {
     max-width: 420px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    position: relative;
 }
 
 /* ----------------------------------------
-   Header
+   Glass Card Effect
    ---------------------------------------- */
-header h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    text-align: center;
-    margin-bottom: 24px;
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 32px var(--glass-shadow);
 }
 
 /* ----------------------------------------
-   Search Form
+   Search Bar
    ---------------------------------------- */
-#search-form {
+.search-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.search-bar {
     display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
+    align-items: center;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    padding: 12px 20px;
+    transition: border-color 0.3s ease;
+}
+
+.search-bar:focus-within {
+    border-color: var(--accent-blue);
+}
+
+.search-icon {
+    color: var(--text-muted);
+    flex-shrink: 0;
 }
 
 #city-input {
     flex: 1;
-    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    outline: none;
     font-family: inherit;
     font-size: 1rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 50px;
-    outline: none;
-    transition: border-color 0.3s ease;
-}
-
-#city-input:focus {
-    border-color: var(--primary-color);
+    color: var(--text-white);
+    padding: 0 12px;
 }
 
 #city-input::placeholder {
     color: var(--text-muted);
 }
 
-button[type="submit"] {
-    padding: 14px 28px;
-    font-family: inherit;
-    font-size: 1rem;
-    font-weight: 600;
-    color: white;
-    background: var(--primary-color);
-    border: none;
-    border-radius: 50px;
+/* ----------------------------------------
+   Autocomplete Suggestions Dropdown
+   ---------------------------------------- */
+.suggestions-list {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    list-style: none;
+    background: rgba(30, 32, 44, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Show only when it has items */
+.suggestions-list.active {
+    display: block;
+}
+
+.suggestions-list li {
+    padding: 14px 20px;
+    font-size: 0.95rem;
+    color: var(--text-white);
     cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s ease;
 }
 
-button[type="submit"]:hover {
-    background: var(--primary-hover);
-    transform: scale(1.03);
+.suggestions-list li:first-child {
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
-button[type="submit"]:active {
-    transform: scale(0.98);
+.suggestions-list li:last-child {
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.suggestions-list li:hover {
+    background: rgba(96, 165, 250, 0.15);
+}
+
+.suggestions-list li .suggestion-country {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-left: auto;
+}
+
+/* Thin scrollbar inside dropdown */
+.suggestions-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.suggestions-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
 }
 
 /* ----------------------------------------
    Location Button
    ---------------------------------------- */
-#location-btn {
+.location-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     width: 100%;
     padding: 12px 20px;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--primary-color);
     background: transparent;
-    border: 2px solid var(--primary-color);
+    border: 1px solid var(--glass-border);
     border-radius: 50px;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: background 0.3s ease, color 0.3s ease;
     margin-bottom: 24px;
+    transition: all 0.3s ease;
 }
 
-#location-btn:hover {
-    background: var(--primary-color);
-    color: white;
+.location-btn:hover {
+    background: var(--glass-bg);
+    color: var(--text-white);
+    border-color: var(--text-white);
 }
 
 /* ----------------------------------------
-   Weather Results Display
+   Main Weather Card
    ---------------------------------------- */
-#weather-results {
+.main-card {
+    padding: 32px 24px;
     text-align: center;
-    padding: 10px 0;
+    margin-bottom: 16px;
 }
 
-/* City name */
 .city-name {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 600;
-    color: var(--text-dark);
     margin-bottom: 4px;
 }
 
-/* Coordinates */
-.coordinates {
-    font-size: 0.85rem;
+.weather-condition {
+    font-size: 1rem;
     color: var(--text-muted);
-    margin-bottom: 8px;
-}
-
-/* Weather icon */
-.weather-icon {
-    width: 100px;
-    height: 100px;
-    margin: 16px auto;
-    display: block;
-}
-
-/* Temperature - large and bold */
-.temperature {
-    font-size: 3.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 8px;
-}
-
-/* Weather condition text (e.g., "Sunny", "Cloudy") */
-.condition {
-    font-size: 1.15rem;
-    font-weight: 400;
-    color: var(--text-muted);
+    margin-bottom: 16px;
     text-transform: capitalize;
+}
+
+.weather-icon-container {
+    margin: 16px 0;
+}
+
+.weather-icon {
+    width: 140px;
+    height: 140px;
+    filter: drop-shadow(0 4px 20px rgba(96, 165, 250, 0.3));
+}
+
+.temperature {
+    font-size: 5rem;
+    font-weight: 700;
+    letter-spacing: -4px;
+    margin-top: 8px;
+    background: linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.7) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ----------------------------------------
+   Stats Row
+   ---------------------------------------- */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stat-card {
+    padding: 20px 12px;
+    text-align: center;
+    border-radius: var(--radius-sm);
+}
+
+.stat-icon {
+    color: var(--accent-blue);
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ----------------------------------------
+   Hourly Forecast Card
+   ---------------------------------------- */
+.forecast-card {
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.forecast-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.forecast-scroll {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar but keep functionality */
+.forecast-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.forecast-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+
+.forecast-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+.forecast-item {
+    flex-shrink: 0;
+    text-align: center;
+    min-width: 60px;
+}
+
+.forecast-time {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.forecast-icon {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 8px;
+}
+
+.forecast-temp {
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 /* ----------------------------------------
    Loading State
    ---------------------------------------- */
 .loading {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    padding: 40px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
+    padding: 60px 0;
+    gap: 16px;
 }
 
 .spinner {
-    width: 36px;
-    height: 36px;
-    border: 4px solid #e2e8f0;
-    border-top-color: var(--primary-color);
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--glass-border);
+    border-top-color: var(--accent-blue);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
@@ -210,33 +404,44 @@ button[type="submit"]:active {
     to { transform: rotate(360deg); }
 }
 
+.loading p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
 /* ----------------------------------------
    Error State
    ---------------------------------------- */
 .error {
-    font-size: 1.1rem;
-    color: var(--error-color);
-    padding: 40px 0;
+    text-align: center;
+    padding: 60px 20px;
+    color: #f87171;
+    font-size: 1rem;
     font-weight: 500;
 }
 
 /* ----------------------------------------
-   Responsive Adjustments
+   Responsive
    ---------------------------------------- */
-@media (max-width: 480px) {
-    main {
-        padding: 30px 24px;
-    }
-
-    #search-form {
-        flex-direction: column;
-    }
-
-    button[type="submit"] {
-        width: 100%;
-    }
-
+@media (max-width: 400px) {
     .temperature {
-        font-size: 2.8rem;
+        font-size: 4rem;
+    }
+
+    .weather-icon {
+        width: 120px;
+        height: 120px;
+    }
+
+    .stats-row {
+        gap: 8px;
+    }
+
+    .stat-card {
+        padding: 16px 8px;
+    }
+
+    .stat-value {
+        font-size: 1rem;
     }
 }
